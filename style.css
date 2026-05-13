@@ -1,36 +1,59 @@
+/* General reset */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   margin: 0;
-  background-color: #f4f4f4;
+  background: linear-gradient(135deg, #f4f4f4, #e0f7fa);
   color: #333;
 }
 
+/* Header with shape */
 header {
   background: #007acc;
   color: white;
-  padding: 1em;
+  padding: 2em;
   text-align: center;
+  position: relative;
+}
+
+.hero-shape {
+  width: 100px;
+  height: 100px;
+  background: #ffcc00;
+  border-radius: 50%;
+  position: absolute;
+  top: 10px;
+  left: 20px;
 }
 
 nav a {
   color: white;
-  margin: 0 10px;
+  margin: 0 15px;
   text-decoration: none;
+  font-weight: bold;
 }
 
 nav a:hover {
   text-decoration: underline;
 }
 
-main {
+/* Card style */
+.card {
+  background: white;
+  margin: 40px auto;
   padding: 20px;
+  max-width: 600px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  text-align: center;
 }
 
+/* Buttons */
 button {
   background: #007acc;
   color: white;
   border: none;
-  padding: 10px;
+  padding: 12px 20px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
@@ -38,12 +61,11 @@ button:hover {
   background: #005f99;
 }
 
+/* Footer */
 footer {
   background: #333;
   color: white;
   text-align: center;
   padding: 1em;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+  margin-top: 40px;
 }

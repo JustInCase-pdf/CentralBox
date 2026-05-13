@@ -2,32 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Assessment Website</title>
-  <!-- Import modern fonts -->
+  <title>CentralBox - Menu</title>
+  <!-- Modern fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>My Computing Technology Assessment</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+  <header class="app-header">
+    <h1>CentralBox</h1>
   </header>
 
   <main>
     <section class="card">
-      <h2>Welcome</h2>
-      <p>This site demonstrates my ability to design, build, and host a modern website using GitHub Pages.</p>
-      <button onclick="changeMessage()">Click Me!</button>
-      <p id="message">This text will change when you click the button.</p>
+      <h2>Menu</h2>
+      <div class="item">
+        <span>Burger</span>
+        <button onclick="addItem('Burger')">+ Add</button>
+      </div>
+      <div class="item">
+        <span>Pizza</span>
+        <button onclick="addItem('Pizza')">+ Add</button>
+      </div>
+      <div class="item">
+        <span>Sushi</span>
+        <button onclick="addItem('Sushi')">+ Add</button>
+      </div>
     </section>
   </main>
 
-  <footer>
-    <p>&copy; 2026 Justin Huynh</p>
+  <footer class="bottom-nav">
+    <a href="index.html">Menu</a>
+    <a href="checkout.html">Checkout</a>
+    <a href="orders.html">Orders</a>
   </footer>
 
   <script src="script.js"></script>

@@ -7,6 +7,7 @@
 </head>
 <body>
   <header>
+    <div class="hero-shape"></div>
     <h1>Contact Me</h1>
     <nav>
       <a href="index.html">Home</a>
@@ -16,20 +17,21 @@
   </header>
 
   <main>
-    <section>
+    <section class="card">
       <h2>Get in Touch</h2>
-      <p>If you’d like to reach out about this project, you can use the form below:</p>
-      <form>
+      <p>If you’d like to reach out about this project, fill in the form below. When you click “Save to File,” your details will be downloaded into a text file.</p>
+      
+      <form id="contactForm">
         <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name"><br><br>
+        <input type="text" id="name" name="name" required><br><br>
 
         <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email"><br><br>
+        <input type="email" id="email" name="email" required><br><br>
 
         <label for="message">Message:</label><br>
-        <textarea id="message" name="message"></textarea><br><br>
+        <textarea id="message" name="message" required></textarea><br><br>
 
-        <button type="submit">Send</button>
+        <button type="button" onclick="saveContactInfo()">Save to File</button>
       </form>
     </section>
   </main>
@@ -37,5 +39,7 @@
   <footer>
     <p>&copy; 2026 Justin Huynh</p>
   </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>

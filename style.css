@@ -1,71 +1,35 @@
-/* General reset */
-body {
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  background: linear-gradient(135deg, #f4f4f4, #e0f7fa);
-  color: #333;
-}
-
-/* Header with shape */
-header {
-  background: #007acc;
-  color: white;
-  padding: 2em;
-  text-align: center;
-  position: relative;
-}
-
+/* Shape for header */
 .hero-shape {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   background: #ffcc00;
   border-radius: 50%;
   position: absolute;
-  top: 10px;
+  top: 20px;
   left: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-nav a {
-  color: white;
-  margin: 0 15px;
-  text-decoration: none;
-  font-weight: bold;
+/* Form styling */
+form {
+  text-align: left;
+  margin: 0 auto;
+  max-width: 400px;
 }
 
-nav a:hover {
-  text-decoration: underline;
-}
-
-/* Card style */
-.card {
-  background: white;
-  margin: 40px auto;
-  padding: 20px;
-  max-width: 600px;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  text-align: center;
-}
-
-/* Buttons */
-button {
-  background: #007acc;
-  color: white;
-  border: none;
-  padding: 12px 20px;
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
   border-radius: 8px;
-  cursor: pointer;
+  border: 1px solid #ccc;
 }
 
-button:hover {
-  background: #005f99;
+textarea {
+  height: 100px;
 }
 
-/* Footer */
-footer {
-  background: #333;
-  color: white;
-  text-align: center;
-  padding: 1em;
-  margin-top: 40px;
+form button {
+  margin-top: 15px;
+  width: 100%;
 }

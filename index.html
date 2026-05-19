@@ -3,110 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CentralBox - School Canteen</title>
-    <link rel="stylesheet" href="style.css">
+    <title>CentralBox</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <header>
-        <div class="header-top">
-            <div class="logo">🍎 <span>CentralBox</span></div>
+    <div id="app-container">
+        
+        <header>
+            <div class="logo">🍎 CentralBox</div>
             <div class="menu-icon">☰</div>
-        </div>
-        <div class="school-name">Canley Vale High School</div>
-    </header>
+        </header>
 
-    <main id="app-container">
-        <section id="menu-screen" class="screen active">
-            <div class="welcome-section">
-                <h1>Welcome, Sam!</h1>
+        <main>
+            <section id="view-menu" class="view active">
+                <div class="school-name">Canley Vale High School</div>
+                <h2>Welcome, Sam!</h2>
+                
                 <div class="search-bar">
-                    <input type="text" placeholder="Search menu...">
+                    <input type="text" placeholder="🔍 Search menu">
                 </div>
-            </div>
-
-            <div class="categories">
-                <button class="cat-btn active">All</button>
-                <button class="cat-btn">Hot Food</button>
-                <button class="cat-btn">Drinks</button>
-                <button class="cat-btn">Snacks</button>
-            </div>
-
-            <div id="food-list" class="food-list">
+                
+                <div class="categories">
+                    <button class="active">All</button>
+                    <button>Hot Food</button>
+                    <button>Drinks</button>
+                    <button>></button>
                 </div>
 
-            <div class="cart-preview">
-                <span>Total: $<span id="cart-total-preview">0.00</span></span>
-                <button onclick="navigateTo('checkout-screen')">View Cart</button>
-            </div>
-        </section>
+                <div id="menu-items" class="item-list">
+                    </div>
 
-        <section id="checkout-screen" class="screen">
-            <h2 class="section-title">Checkout</h2>
-            
-            <div class="form-group">
-                <label>Pickup Time</label>
-                <select id="pickup-time">
-                    <option>10:30 AM (Recess)</option>
-                    <option>12:30 PM (Lunch)</option>
+                <div class="cart-summary">
+                    <span>Total: $<span id="cart-total-menu">0.00</span></span>
+                    <button onclick="goToCheckout()" class="btn-primary">View Cart</button>
+                </div>
+            </section>
+
+            <section id="view-checkout" class="view">
+                <div class="school-name">Canley Vale High School</div>
+                <h2>Checkout</h2>
+                
+                <select id="pickup-time" class="dropdown">
+                    <option>Select Pickup Time</option>
+                    <option>Recess (10:30 AM)</option>
+                    <option>Lunch (12:30 PM)</option>
                 </select>
-            </div>
 
-            <div class="selected-items-box">
                 <h3>Selected Items</h3>
-                <div id="checkout-items-list"></div>
-            </div>
+                <div id="checkout-items" class="item-list">
+                    </div>
 
-            <div class="form-group">
-                <label>Allergies / Notes</label>
-                <textarea id="allergy-notes" placeholder="e.g. No nuts, extra napkins"></textarea>
-            </div>
+                <h3>Allergies</h3>
+                <textarea placeholder="Please note any allergies here..."></textarea>
 
-            <div class="payment-box">
-                <div class="total-row">
-                    <span>Total:</span>
-                    <span>$<span id="checkout-total">0.00</span></span>
+                <div class="checkout-footer">
+                    <div class="total-row">
+                        <span>Total:</span>
+                        <h2>$<span id="cart-total-checkout">0.00</span></h2>
+                    </div>
+                    <button class="btn-primary full-width" onclick="payNow()">Pay Now</button>
                 </div>
-                <p class="parent-note">⚠️ Requires Parent Approval</p>
-                <button class="pay-btn" onclick="processPayment()">Pay Now</button>
-            </div>
-        </section>
+            </section>
 
-        <section id="orders-screen" class="screen">
-            <div class="tab-system">
-                <button class="tab-btn active">Upcoming</button>
-                <button class="tab-btn">Past Orders</button>
-            </div>
-
-            <div id="upcoming-orders">
-                <p class="empty-msg">No active orders.</p>
-            </div>
-
-            <h3 class="history-title">Order History</h3>
-            <div class="history-list">
-                <div class="history-card">
-                    <div class="history-date">May 15, 2026</div>
-                    <div class="history-details">1x Chicken Wrap, 1x Apple Juice</div>
-                    <div class="history-price">$8.50</div>
+            <section id="view-orders" class="view">
+                <div class="school-name">Canley Vale High School</div>
+                
+                <div class="order-tabs">
+                    <button class="active">Upcoming</button>
+                    <button>Past Orders</button>
                 </div>
-            </div>
-        </section>
-    </main>
 
-    <nav class="bottom-nav">
-        <div class="nav-item" onclick="navigateTo('menu-screen')">
-            <span>🏠</span>
-            <p>Menu</p>
-        </div>
-        <div class="nav-item" onclick="navigateTo('checkout-screen')">
-            <span>🛒</span>
-            <p>Orders</p>
-        </div>
-        <div class="nav-item" onclick="navigateTo('orders-screen')">
-            <span>👤</span>
-            <p>Account</p>
-        </div>
-    </nav>
+                <div id="upcoming-orders" class="orders-list">
+                    <p class="empty-state">No upcoming orders. Go to the menu to place one!</p>
+                </div>
+            </section>
+        </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-btn active" onclick="switchView('view-menu', this)">
+                <div class="icon">🏠</div>Menu
+            </button>
+            <button class="nav-btn" onclick="switchView('view-orders', this)">
+                <div class="icon">🧾</div>Orders
+            </button>
+            <button class="nav-btn">
+                <div class="icon">👤</div>Account
+            </button>
+        </nav>
+    </div>
 
     <script src="script.js"></script>
 </body>

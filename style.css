@@ -1,61 +1,149 @@
+:root {
+    --primary: #6c757d;
+    --bg-light: #f8f9fa;
+    --border: #dee2e6;
+    --text: #333;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  background: #f5f7fa;
-  color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light);
+    color: var(--text);
+    padding-bottom: 70px; /* Space for nav */
 }
 
-.app-header {
-  background: #007acc;
-  color: white;
-  padding: 1.2em;
-  text-align: center;
-  font-family: 'Poppins', sans-serif;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+/* Header */
+header {
+    background: white;
+    padding: 15px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-.card {
-  background: white;
-  margin: 20px;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.item {
-  display: flex;
-  justify-content: space-between;
-  margin: 10px 0;
+.logo { font-weight: bold; font-size: 1.2rem; }
+.school-name { font-size: 0.9rem; color: #666; margin-top: 5px; }
+
+/* Screens */
+.screen {
+    display: none;
+    padding: 20px;
 }
 
-button {
-  background: #007acc;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 25px;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
+.screen.active {
+    display: block;
 }
 
-button:hover {
-  background: #005f99;
+/* Menu Elements */
+.welcome-section h1 { font-size: 1.5rem; }
+.search-bar input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-sizing: border-box;
 }
 
+.categories {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    overflow-x: auto;
+}
+
+.cat-btn {
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: white;
+    white-space: nowrap;
+}
+
+.cat-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* Food Cards */
+.food-card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.food-info h4 { margin: 0; }
+.food-info p { margin: 5px 0 0; color: #666; }
+
+.add-btn {
+    background: #e9ecef;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Checkout */
+.selected-items-box {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+}
+
+.pay-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* Navigation */
 .bottom-nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: #fff;
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  border-top: 1px solid #ddd;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
 }
 
-.bottom-nav a {
-  text-decoration: none;
-  color: #007acc;
-  font-weight: 600;
+.nav-item { text-align: center; cursor: pointer; }
+.nav-item p { margin: 0; font-size: 0.7rem; }
+
+/* History */
+.history-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    border-left: 4px solid var(--primary);
 }

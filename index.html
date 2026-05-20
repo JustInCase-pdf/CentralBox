@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CentralBox | CVHS</title>
+    
+    <style>
+        :root {
+            --primary: #2d3436;
+            --accent: #0984e3;
+            --bg-color: #f9fbff;
+            --card-bg: #ffffff;
+            --text-main: #1e272e;
+            --text-muted: #808e9b;
+            --border: #dcdde1;
+            --parent-theme: #6c5ce7;
+            --staff-theme: #00b894;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #f5f6fa;
+            --text-muted: #a0a0a0;
+            --border: #2f3640;
+            --nav-bg: rgba(30, 30, 30, 0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; letter-spacing: -0.03em; transition: background 0.3s, color 0.3s; }
+        body { background-color: #f1f2f6; display: flex; justify-content: center; height: 100vh; overflow: hidden; }
+        [data-theme="dark"] body { background-color: #000; }
+
+        #app-container {
+            width: 100%; max-width: 1200px; height: 100%;
+            background-color: var(--bg-color); position: relative;
+            display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        /* --- AUTH SCREEN --- */
+        #auth-screen {
+            position: absolute; inset: 0; background: white; z-index: 500;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            display: none; height: 70px; align-items: center; justify-content: flex-end;
+            padding: 0 24px; background: var(--card-bg); border-bottom: 1px solid var(--border); 
+            z-index: 100; position: relative;
+        }
+        
+        .internal-logo-btn { 
+            height: 120px; width: auto; position: absolute; left: 20px; top: 50%;
+            transform: translateY(-50%); cursor: pointer; z-index: 101; transition: 0.2s;
+        }
+
+        #role-badge {
+            font-size: 0.65rem; font-weight: 900; background: var(--text-main); 
+            color: white; padding: 5px 12px; border-radius: 8px;
+        }
+
+        /* --- VIEWS --- */
+        main { flex: 1; overflow-y: auto; padding-bottom: 110px; position: relative; }
+        .view { display: none; padding: 24px; animation: fadeIn 0.4s ease; color: var(--text-main); }
+        .view.active { display: block; }
+        #view-home.active { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- GRID --- */
+        .hero-title { font-size: 3rem; font-weight: 900; line-height: 1.1; margin-bottom: 30px; color: var(--text-main); }
+        .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 420px; }
+        .home-card { background: var(--card-bg); padding: 30px 10px; border-radius: 28px; cursor: pointer; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .home-card p { margin-top: 8px; font-weight: 700; color: var(--text-main); }
+        
+        .form-input { width: 100%; padding: 18px; margin-bottom: 15px; border-radius: 16px; border: 1px solid var(--border); font-size: 1rem; background: var(--card-bg); color: var(--text-main); }
+        .btn-black { background: var(--text-main); color: white; border: none; padding: 20px; border-radius: 18px; font-weight: 800; width: 100%; cursor: pointer; }
+        .item-card { background: var(--card-bg); padding: 22px; border-radius: 22px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border: 1px solid var(--border); }
+        .chip { padding: 12px 24px; border: none; border-radius: 50px; background: var(--border); font-weight: 700; cursor: pointer; margin-right: 8px; color: var(--text-main); }
+        .chip.active { background: var(--text-main); color: var(--card-bg); }
+
+        #bottom-nav {
+            position: absolute; bottom: 0; width: 100%; height: 95px;
+            background: var(--nav-bg); backdrop-filter: blur(20px);
+            display: none; justify-content: space-around; align-items: center;
+            border-top: 1px solid var(--border); padding-bottom: 10px; z-index: 200;
+        }
+        .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; background: none; border: none; cursor: pointer; color: var(--text-muted); }
+        .nav-tab.active { color: var(--text-main); }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <div id="auth-screen">
+            <div style="width: 100%; max-width: 380px; text-align: center;">
+                <img src="CB.png" alt="CB Logo" style="height: 90px; margin-bottom: 30px;">
+                <h1 id="auth-title">Sign In</h1>
+                <div id="signup-fields" style="display: none;"><input type="text" id="reg-name" class="form-input" placeholder="Full Name"></div>
+                <input type="email" id="auth-email" class="form-input" placeholder="Email Address">
+                <input type="password" id="auth-pass" class="form-input" placeholder="Password">
+                <button class="btn-black" id="main-auth-btn" onclick="handleAuth()">Sign In</button>
+                <button id="toggle-auth-btn" style="background:none; border:none; color:var(--accent); margin-top:15px; cursor:pointer; font-weight:700;" onclick="toggleAuthMode()">Parent? Sign Up here</button>
+            </div>
+        </div>
+
+        <header id="app-header">
+            <img src="CentralBox.png" alt="Home" class="internal-logo-btn" onclick="switchTab('view-home')">
+            <div id="role-badge">USER</div>
+        </header>
+
+        <main>
+            <section id="view-home" class="view">
+                <img src="CB.png" alt="CB Logo" style="height:60px; margin-bottom:15px;">
+                <h1 class="hero-title" id="home-greeting">Hungry,<br>User?</h1>
+                
+                <div class="home-grid" id="standard-grid">
+                    <div class="home-card" onclick="switchTab('view-menu')"><span>🍔</span><p>Order</p></div>
+                    <div class="home-card" onclick="switchTab('view-orders')"><span>🧾</span><p>Orders</p></div>
+                    <div class="home-card" id="stats-card-btn" style="display: none;" onclick="switchTab('view-stats')"><span>📊</span><p>Statistics</p></div>
+                    <div class="home-card" onclick="switchTab('view-account')"><span>👤</span><p>Profile</p></div>
+                    <div class="home-card" onclick="switchTab('view-settings')"><span>⚙️</span><p>Settings</p></div>
+                </div>
+
+                <div class="home-grid" id="parent-grid" style="display: none;">
+                    <div class="home-card" onclick="switchTab('view-parent-orders')"><span>👀</span><p>Track Orders</p></div>
+                    <div class="home-card" onclick="switchTab('view-parent-limits')"><span>💰</span><p>Limits</p></div>
+                    <div class="home-card" onclick="switchTab('view-account')"><span>👤</span><p>Profile</p></div>
+                    <div class="home-card" onclick="switchTab('view-settings')"><span>⚙️</span><p>Settings</p></div>
+                </div>
+            </section>
+
+            <section id="view-menu" class="view">
+                <h2>Canteen Menu</h2>
+                <div style="display: flex; overflow-x: auto; margin: 15px 0; padding-bottom: 5px; gap: 5px;">
+                    <button class="chip active" onclick="filterCat('Food', this)">Regular Food</button>
+                    <button class="chip" onclick="filterCat('Hot Food', this)">Hot Food</button>
+                    <button class="chip" onclick="filterCat('Drinks', this)">Drinks</button>
+                    <button class="chip" onclick="filterCat('Snacks', this)">Snacks</button>
+                </div>
+                <div id="menu-items"></div>
+                
+                <div style="margin-top: 20px; padding: 25px; background: var(--text-main); border-radius: 26px; color: var(--card-bg); display: flex; justify-content: space-between; align-items: center;">
+                    <div><p style="font-size: 0.75rem; opacity: 0.6; font-weight: 800;">SUBTOTAL</p><h2 id="cart-total">$0.00</h2></div>
+                    <button onclick="switchTab('view-checkout')" style="background: var(--accent); border: none; padding: 14px 28px; border-radius: 16px; font-weight: 900; color: white; cursor: pointer;">Review Order</button>
+                </div>
+            </section>
+
+            <section id="view-checkout" class="view">
+                <h2>Checkout</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Review your order and add any specific requirements.</p>
+
+                <div style="margin-top: 20px;">
+                    <label style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted);">DIETARY / NUTRITIONAL REQUIREMENTS</label>
+                    <textarea id="dietary-notes" class="form-input" placeholder="e.g. No nuts, gluten free..." style="height: 120px; resize: none; margin-top: 5px;"></textarea>
+                </div>
+
+                <div style="margin-top: 20px; padding: 25px; background: var(--text-main); border-radius: 26px; color: var(--card-bg); display: flex; justify-content: space-between; align-items: center;">
+                    <div><p style="font-size: 0.75rem; opacity: 0.6; font-weight: 800;">TOTAL DUE</p><h2 id="checkout-total">$0.00</h2></div>
+                    <button onclick="confirmOrder()" style="background: #00b894; border: none; padding: 14px 28px; border-radius: 16px; font-weight: 900; color: white; cursor: pointer;">Confirm</button>
+                </div>
+                
+                <button onclick="switchTab('view-menu')" style="background: none; border: none; color: var(--accent); font-weight: 700; width: 100%; margin-top: 20px; cursor: pointer;">Go Back to Menu</button>
+            </section>
+
+            <section id="view-parent-limits" class="view">
+                <h2>Daily Spending Limit</h2>
+                <div style="background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid var(--border); margin-top: 20px; text-align: center;">
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Set a daily cap for your child's account.</p>
+                    <h1 id="limit-value" style="font-size: 3.5rem; margin: 20px 0;">$15</h1>
+                    <input type="range" min="1" max="100" value="15" step="1" style="width: 100%; margin: 20px 0; cursor: pointer;" oninput="document.getElementById('limit-value').innerText = '$' + this.value">
+                    <button class="btn-black" onclick="alert('Limit Saved!')">Save Limit</button>
+                </div>
+            </section>
+
+            <section id="view-stats" class="view">
+                <h2>Canteen Insights</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                    <div style="background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid var(--border); text-align: center;">
+                        <p style="font-size: 0.7rem; color: var(--text-muted);">DAILY REVENUE</p>
+                        <h3 style="font-size: 1.4rem;">$721.20</h3>
+                    </div>
+                    <div style="background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid var(--border); text-align: center;">
+                        <p style="font-size: 0.7rem; color: var(--text-muted);">ACTIVE ORDERS</p>
+                        <h3 style="font-size: 1.4rem;">61</h3>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-orders" class="view">
+                <h2>Your Orders</h2>
+                <div class="item-card" style="margin-top: 20px; text-align: center; display: block; color: var(--text-muted);">No active orders.</div>
+            </section>
+            
+            <section id="view-parent-orders" class="view">
+                <h2>Track Orders</h2>
+                <div class="item-card" style="margin-top: 20px; text-align: center; display: block; color: var(--text-muted);">No active child orders.</div>
+            </section>
+
+            <section id="view-settings" class="view">
+                <h2>Settings</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border); margin-top: 20px;">
+                    <div><h4 style="margin:0;">Dark Mode</h4><p style="font-size:0.75rem; color:var(--text-muted);">Switch app theme</p></div>
+                    <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" style="width:24px; height:24px; cursor:pointer;">
+                </div>
+            </section>
+
+            <section id="view-account" class="view">
+                <h2>Profile</h2>
+                <div class="item-card" style="margin-top: 20px;">
+                    <div><h4 id="user-display-name" style="font-size: 1.4rem;">User</h4><p id="user-display-email" style="color: var(--text-muted);"></p></div>
+                </div>
+                <button class="btn-black" style="background: #ff4757; margin-top: 30px;" onclick="location.reload()">Log Out</button>
+            </section>
+        </main>
+
+        <nav id="bottom-nav">
+            <button class="nav-tab" onclick="switchTab('view-home')"><span>🏠</span><span style="font-size:0.5rem; font-weight:900;">HOME</span></button>
+            <button class="nav-tab" onclick="switchTab('view-menu')"><span>🍔</span><span style="font-size:0.5rem; font-weight:900;">MENU</span></button>
+            <button class="nav-tab" onclick="switchTab('view-account')"><span>👤</span><span style="font-size:0.5rem; font-weight:900;">PROFILE</span></button>
+            <button class="nav-tab" onclick="switchTab('view-settings')"><span>⚙️</span><span style="font-size:0.5rem; font-weight:900;">SETTINGS</span></button>
+        </nav>
+    </div>
+
+    <script>
+        const menuData = [
+            { id: 1, name: "California Roll Tray", price: 8.50, cat: "Food" },
+            { id: 2, name: "Salmon Sashimi Tray", price: 10.00, cat: "Food" },
+            { id: 3, name: "Tuna, Egg & Mayo Sandwich", price: 6.50, cat: "Food" },
+            { id: 4, name: "Greek Chicken Gyro", price: 7.50, cat: "Hot Food" },
+            { id: 5, name: "Caesar Pasta Salad", price: 6.50, cat: "Hot Food" },
+            { id: 6, name: "Cup Noodles", price: 4.50, cat: "Hot Food" },
+            { id: 7, name: "Spicy Cup Noodles", price: 5.00, cat: "Hot Food" },
+            { id: 8, name: "Hotdog", price: 5.50, cat: "Hot Food" },
+            { id: 9, name: "Caesar Burger", price: 8.50, cat: "Hot Food" },
+            { id: 10, name: "Caesar Wrap", price: 8.50, cat: "Hot Food" },
+            { id: 11, name: "Cheese Burger", price: 6.50, cat: "Hot Food" },
+            { id: 12, name: "Solo", price: 3.50, cat: "Drinks" },
+            { id: 13, name: "Pepsi Max", price: 3.50, cat: "Drinks" },
+            { id: 14, name: "Sunkist", price: 3.50, cat: "Drinks" },
+            { id: 15, name: "Water", price: 2.50, cat: "Drinks" },
+            { id: 16, name: "Chocolate Milk", price: 3.50, cat: "Drinks" },
+            { id: 17, name: "Strawberry Milk", price: 3.50, cat: "Drinks" },
+            { id: 18, name: "Snap BBQ Flavour", price: 3.50, cat: "Snacks" },
+            { id: 19, name: "Zooper Dooper", price: 1.00, cat: "Snacks" },
+            { id: 20, name: "Frozen Jelly Sticks", price: 0.50, cat: "Snacks" }
+        ];
+
+        let usersDB = JSON.parse(localStorage.getItem('cb_users')) || {};
+        let isSignupMode = false;
+        let cartTotal = 0;
+        let activeCategory = 'Food';
+
+        function toggleTheme() {
+            const isDark = document.getElementById('theme-toggle').checked;
+            document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        }
+
+        function toggleAuthMode() {
+            isSignupMode = !isSignupMode;
+            document.getElementById('auth-title').innerText = isSignupMode ? "Create Account" : "Sign In";
+            document.getElementById('main-auth-btn').innerText = isSignupMode ? "Register" : "Sign In";
+            document.getElementById('signup-fields').style.display = isSignupMode ? "block" : "none";
+            document.getElementById('toggle-auth-btn').innerText = isSignupMode ? "Back to Sign In" : "Parent? Sign Up here";
+        }
+
+        function handleAuth() {
+            const email = document.getElementById('auth-email').value.toLowerCase();
+            const pass = document.getElementById('auth-pass').value;
+            const fullName = document.getElementById('reg-name').value;
+            if (!email || !pass) return alert("Missing info.");
+
+            const isStudent = email.endsWith('@education.nsw.gov.au');
+            const isTeacher = email.endsWith('@det.nsw.edu.au');
+            const isStaff = email.endsWith('@centralbox.com');
+
+            if (isSignupMode) {
+                usersDB[email] = { name: fullName, pass: pass };
+                localStorage.setItem('cb_users', JSON.stringify(usersDB));
+                toggleAuthMode();
+            } else {
+                if (isStudent || isTeacher || isStaff) {
+                    const firstName = email.split('@')[0].split('.')[0];
+                    loginUser(email, firstName.charAt(0).toUpperCase() + firstName.slice(1), isStudent, isTeacher, isStaff);
+                } else if (usersDB[email] && usersDB[email].pass === pass) {
+                    loginUser(email, usersDB[email].name, false, false, false);
+                } else { alert("Account not found."); }
+            }
+        }
+
+        function loginUser(email, name, isStudent, isTeacher, isStaff) {
+            const fName = name.split(' ')[0];
+            document.getElementById('home-greeting').innerHTML = `Hungry,<br>${fName}?`;
+            document.getElementById('user-display-name').innerText = name;
+            document.getElementById('user-display-email').innerText = email;
+            
+            const badge = document.getElementById('role-badge');
+            if (isStudent) badge.innerText = "STUDENT";
+            else if (isTeacher) { badge.innerText = "TEACHER"; document.getElementById('stats-card-btn').style.display = 'block'; }
+            else if (isStaff) { badge.innerText = "STAFF"; badge.style.background = "var(--staff-theme)"; document.getElementById('stats-card-btn').style.display = 'block'; }
+            else { 
+                badge.innerText = "PARENT"; badge.style.background = "var(--parent-theme)";
+                document.getElementById('standard-grid').style.display = 'none';
+                document.getElementById('parent-grid').style.display = 'grid';
+            }
+
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('app-header').style.display = 'flex';
+            switchTab('view-home');
+        }
+
+        function switchTab(viewId) {
+            document.querySelectorAll('.view').forEach(v => { v.style.display = 'none'; v.classList.remove('active'); });
+            
+            // Failsafe in case a view doesn't exist
+            const target = document.getElementById(viewId);
+            if (target) {
+                target.classList.add('active');
+                target.style.display = (viewId === 'view-home') ? 'flex' : 'block';
+            }
+            
+            document.getElementById('bottom-nav').style.display = (viewId === 'view-home') ? 'none' : 'flex';
+            if(viewId === 'view-menu') renderMenu();
+        }
+
+        function renderMenu() {
+            const list = document.getElementById('menu-items');
+            list.innerHTML = menuData.filter(i => i.cat === activeCategory).map(i => `
+                <div class="item-card">
+                    <div><h4>${i.name}</h4><p style="color:var(--accent); font-weight:900;">$${i.price.toFixed(2)}</p></div>
+                    <button class="chip active" onclick="addToCart(${i.price})">Add</button>
+                </div>
+            `).join('');
+        }
+
+        function filterCat(cat, el) {
+            activeCategory = cat;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            renderMenu();
+        }
+
+        function addToCart(price) {
+            cartTotal += price;
+            document.getElementById('cart-total').innerText = `$${cartTotal.toFixed(2)}`;
+            document.getElementById('checkout-total').innerText = `$${cartTotal.toFixed(2)}`;
+        }
+
+        function confirmOrder() {
+            if (cartTotal === 0) return alert("Your cart is empty!");
+            const notes = document.getElementById('dietary-notes').value;
+            alert(`Order Confirmed for $${cartTotal.toFixed(2)}!\n${notes ? "Notes: " + notes : ""}`);
+            
+            // Reset cart and text field
+            cartTotal = 0;
+            document.getElementById('cart-total').innerText = "$0.00";
+            document.getElementById('checkout-total').innerText = "$0.00";
+            document.getElementById('dietary-notes').value = "";
+            
+            // Send user back to home
+            switchTab('view-home');
+        }
+    </script>
+</body>
+</html>

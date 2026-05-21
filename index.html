@@ -76,7 +76,7 @@
         .home-card { background: var(--card-bg); padding: 30px 10px; border-radius: 28px; cursor: pointer; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .home-card p { margin-top: 8px; font-weight: 700; color: var(--text-main); }
         
-        .form-input { width: 100%; padding: 18px; margin-bottom: 15px; border-radius: 16px; border: 1px solid var(--border); font-size: 1rem; background: var(--bg-color); color: var(--text-main); }
+        .form-input, .form-select { width: 100%; padding: 18px; margin-bottom: 15px; border-radius: 16px; border: 1px solid var(--border); font-size: 1rem; background: var(--bg-color); color: var(--text-main); outline: none; }
         .btn-black { background: var(--text-main); color: var(--card-bg); border: none; padding: 20px; border-radius: 18px; font-weight: 800; width: 100%; cursor: pointer; }
         .item-card { background: var(--card-bg); padding: 22px; border-radius: 22px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border: 1px solid var(--border); color: var(--text-main); }
         .chip { padding: 12px 24px; border: none; border-radius: 50px; background: var(--border); font-weight: 700; cursor: pointer; margin-right: 8px; color: var(--text-main); }
@@ -102,6 +102,11 @@
             text-align: center; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             color: var(--text-main);
         }
+
+        /* --- PROFILE/SETTINGS EXTRAS --- */
+        .section-label { font-size: 0.75rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin: 20px 0 10px 5px; display: block; }
+        .setting-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .avatar-circle { width: 60px; height: 60px; background: var(--border); border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -120,7 +125,7 @@
         </div>
 
         <header id="app-header">
-            <img src="CentralBox.png" alt="Home" class="internal-logo-btn" onclick="switchTab('view-home')">
+            <img src="CentralBox.png" alt="Home" class="internal-logo-btn" id="header-logo" onclick="switchTab('view-home')">
             <div id="role-badge">USER</div>
         </header>
 
@@ -181,8 +186,89 @@
             <section id="view-orders" class="view">
                 <h2>Your Orders</h2>
                 <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.9rem;">Past and current canteen orders.</p>
-                <div id="orders-container">
+                <div id="orders-container"></div>
+            </section>
+
+            <section id="view-account" class="view">
+                <h2>Profile</h2>
+                
+                <div class="item-card" style="margin-top: 20px; flex-direction: column; align-items: center; text-align: center;">
+                    <div class="avatar-circle">👤</div>
+                    <h4 id="user-display-name" style="font-size: 1.4rem;">User</h4>
+                    <p id="user-display-email" style="color: var(--text-muted);"></p>
+                </div>
+
+                <span class="section-label">Identity & Class</span>
+                <div class="item-card">
+                    <select class="form-select" style="margin-bottom:0;" id="profile-year-group">
+                        <option value="">Select Year Group</option>
+                        <option value="7">Year 7</option>
+                        <option value="8">Year 8</option>
+                        <option value="9">Year 9</option>
+                        <option value="10">Year 10</option>
+                        <option value="11">Year 11</option>
+                        <option value="12">Year 12</option>
+                    </select>
+                </div>
+
+                <span class="section-label">Dietary Preferences</span>
+                <div class="item-card" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+                    <div class="setting-row"><span>Vegetarian Option</span><input type="checkbox"></div>
+                    <div class="setting-row"><span>Halal Preferred</span><input type="checkbox"></div>
+                    <div class="setting-row"><span>Nut Allergy Alert</span><input type="checkbox" checked></div>
+                </div>
+
+                <span class="section-label">Saved Balance</span>
+                <div class="item-card">
+                    <div><p style="font-size: 0.7rem; color: var(--text-muted);">CURRENT CREDIT</p><h3>$42.50</h3></div>
+                    <button class="chip active" style="padding: 8px 16px; font-size: 0.8rem;">Top Up</button>
+                </div>
+
+                <span class="section-label">Quick Actions</span>
+                <button class="btn-black" style="padding: 15px; margin-bottom: 10px; background: var(--accent); color: white;">View Favorite Orders</button>
+                <button class="btn-black" style="background: #ff4757; color: white;" onclick="location.reload()">Log Out</button>
+            </section>
+
+            <section id="view-settings" class="view">
+                <h2>Settings</h2>
+
+                <span class="section-label">System Behavior</span>
+                <div class="item-card" style="flex-direction: column; gap: 15px;">
+                    <div class="setting-row">
+                        <div><h4 style="margin:0;">Dark Mode</h4><p style="font-size:0.75rem; color:var(--text-muted);">Switch app theme</p></div>
+                        <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" style="width:24px; height:24px; cursor:pointer;">
                     </div>
+                </div>
+
+                <span class="section-label">Notifications</span>
+                <div class="item-card" style="flex-direction: column; gap: 12px;">
+                    <div class="setting-row"><span>Order Ready Alerts</span><input type="checkbox" checked></div>
+                    <div class="setting-row"><span>Daily Specials</span><input type="checkbox"></div>
+                </div>
+
+                <span class="section-label">Order Defaults</span>
+                <div class="item-card">
+                    <div class="setting-row">
+                        <span>Default Pickup</span>
+                        <select class="form-select" style="width: auto; padding: 5px 10px; margin-bottom: 0;">
+                            <option>Lunch</option>
+                            <option>Recess</option>
+                        </select>
+                    </div>
+                </div>
+
+                <span class="section-label">Security & Account</span>
+                <div class="item-card" style="flex-direction: column; gap: 10px; align-items: flex-start;">
+                    <button style="background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer;">Change Password</button>
+                    <button style="background: none; border: none; color: #ff4757; font-weight: 700; cursor: pointer;">Clear Saved Payment Info</button>
+                </div>
+
+                <div id="parental-ctrl-section" style="display: none;">
+                    <span class="section-label">Parental Controls</span>
+                    <div class="item-card">
+                        <div class="setting-row"><span>Limit Spending</span><button class="chip active" onclick="switchTab('view-parent-limits')">Edit</button></div>
+                    </div>
+                </div>
             </section>
 
             <section id="view-parent-limits" class="view">
@@ -213,22 +299,6 @@
                 <h2>Track Orders</h2>
                 <div class="item-card" style="margin-top: 20px; text-align: center; display: block; color: var(--text-muted);">No active child orders.</div>
             </section>
-
-            <section id="view-settings" class="view">
-                <h2>Settings</h2>
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border); margin-top: 20px;">
-                    <div><h4 style="margin:0;">Dark Mode</h4><p style="font-size:0.75rem; color:var(--text-muted);">Switch app theme</p></div>
-                    <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" style="width:24px; height:24px; cursor:pointer;">
-                </div>
-            </section>
-
-            <section id="view-account" class="view">
-                <h2>Profile</h2>
-                <div class="item-card" style="margin-top: 20px;">
-                    <div><h4 id="user-display-name" style="font-size: 1.4rem;">User</h4><p id="user-display-email" style="color: var(--text-muted);"></p></div>
-                </div>
-                <button class="btn-black" style="background: #ff4757; margin-top: 30px; color: white;" onclick="location.reload()">Log Out</button>
-            </section>
         </main>
 
         <nav id="bottom-nav">
@@ -241,14 +311,12 @@
         <div id="qty-modal">
             <div class="modal-content">
                 <h3 id="modal-item-name" style="margin-bottom: 5px;">Item</h3>
-                <p id="modal-item-price" style="color: var(--accent); font-weight: 800; margin-bottom: 25px;">$0.00</p>
-                
+                <p id="modal-item-price" style="color: var(--accent); font-weight: 800; margin-bottom: 25px;">$0.00 each</p>
                 <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 30px;">
                     <button onclick="changeQty(-1)" style="width: 45px; height: 45px; border-radius: 25px; border: none; background: var(--border); font-size: 1.5rem; font-weight: bold; cursor: pointer; color: var(--text-main);">-</button>
                     <h2 id="modal-qty-display" style="width: 30px;">1</h2>
                     <button onclick="changeQty(1)" style="width: 45px; height: 45px; border-radius: 25px; border: none; background: var(--border); font-size: 1.5rem; font-weight: bold; cursor: pointer; color: var(--text-main);">+</button>
                 </div>
-                
                 <button class="btn-black" onclick="addToCart()" style="margin-bottom: 15px;">Add to Order</button>
                 <button onclick="closeModal()" style="background: none; border: none; color: var(--text-muted); font-weight: 700; cursor: pointer; width: 100%; padding: 10px;">Cancel</button>
             </div>
@@ -283,20 +351,19 @@
         let usersDB = JSON.parse(localStorage.getItem('cb_users')) || {};
         let isSignupMode = false;
         let activeCategory = 'Food';
-        document.getElementById('auth-screen').addEventListener('keypress', function(event) {
-    if (event.key === 'Enter') {
-        event.preventDefault(); // Prevents any weird default form behavior
-        handleAuth(); // Triggers the same function as the button
-    }
-});
-        // Cart & Order Tracking
         let currentUserEmail = null;
         let cartItems = [];
         let cartTotal = 0;
-        
-        // Modal State
         let selectedItem = null;
         let selectedQty = 1;
+        let priceMultiplier = 1.0;
+
+        document.getElementById('auth-screen').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                handleAuth();
+            }
+        });
 
         function toggleTheme() {
             const isDark = document.getElementById('theme-toggle').checked;
@@ -340,21 +407,32 @@
         }
 
         function loginUser(email, name, isStudent, isTeacher, isStaff) {
-            currentUserEmail = email; // Set global user
-            
+            currentUserEmail = email;
             const fName = name.split(' ')[0];
             document.getElementById('home-greeting').innerHTML = `Hungry,<br>${fName}?`;
             document.getElementById('user-display-name').innerText = name;
             document.getElementById('user-display-email').innerText = email;
             
+            priceMultiplier = (isTeacher || isStaff) ? 0.8 : 1.0;
+
             const badge = document.getElementById('role-badge');
-            if (isStudent) badge.innerText = "STUDENT";
-            else if (isTeacher) { badge.innerText = "TEACHER"; document.getElementById('stats-card-btn').style.display = 'block'; }
-            else if (isStaff) { badge.innerText = "STAFF"; badge.style.background = "var(--staff-theme)"; document.getElementById('stats-card-btn').style.display = 'block'; }
-            else { 
-                badge.innerText = "PARENT"; badge.style.background = "var(--parent-theme)";
+            const statsBtn = document.getElementById('stats-card-btn');
+            statsBtn.style.display = 'none'; 
+
+            if (isStudent) {
+                badge.innerText = "STUDENT";
+            } else if (isTeacher) { 
+                badge.innerText = "TEACHER"; 
+            } else if (isStaff) { 
+                badge.innerText = "STAFF"; 
+                badge.style.background = "var(--staff-theme)"; 
+                statsBtn.style.display = 'block'; 
+            } else { 
+                badge.innerText = "PARENT"; 
+                badge.style.background = "var(--parent-theme)";
                 document.getElementById('standard-grid').style.display = 'none';
                 document.getElementById('parent-grid').style.display = 'grid';
+                document.getElementById('parental-ctrl-section').style.display = 'block';
             }
 
             document.getElementById('auth-screen').style.display = 'none';
@@ -363,28 +441,31 @@
         }
 
         function switchTab(viewId) {
+            // Hide the header logo if on home screen, show otherwise
+            document.getElementById('header-logo').style.opacity = (viewId === 'view-home') ? '0' : '1';
+            document.getElementById('header-logo').style.pointerEvents = (viewId === 'view-home') ? 'none' : 'auto';
+
             document.querySelectorAll('.view').forEach(v => { v.style.display = 'none'; v.classList.remove('active'); });
-            
             const target = document.getElementById(viewId);
             if (target) {
                 target.classList.add('active');
                 target.style.display = (viewId === 'view-home') ? 'flex' : 'block';
             }
-            
             document.getElementById('bottom-nav').style.display = (viewId === 'view-home') ? 'none' : 'flex';
-            
             if(viewId === 'view-menu') renderMenu();
             if(viewId === 'view-orders') renderOrders();
         }
 
         function renderMenu() {
             const list = document.getElementById('menu-items');
-            list.innerHTML = menuData.filter(i => i.cat === activeCategory).map(i => `
+            list.innerHTML = menuData.filter(i => i.cat === activeCategory).map(i => {
+                const finalPrice = i.price * priceMultiplier;
+                return `
                 <div class="item-card">
-                    <div><h4>${i.name}</h4><p style="color:var(--accent); font-weight:900;">$${i.price.toFixed(2)}</p></div>
+                    <div><h4>${i.name}</h4><p style="color:var(--accent); font-weight:900;">$${finalPrice.toFixed(2)}</p></div>
                     <button class="chip active" onclick="openModal(${i.id})">Add</button>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function filterCat(cat, el) {
@@ -394,16 +475,13 @@
             renderMenu();
         }
 
-        // --- MODAL & CART LOGIC ---
-
         function openModal(itemId) {
             selectedItem = menuData.find(i => i.id === itemId);
             selectedQty = 1;
-            
+            const finalPrice = selectedItem.price * priceMultiplier;
             document.getElementById('modal-item-name').innerText = selectedItem.name;
-            document.getElementById('modal-item-price').innerText = `$${selectedItem.price.toFixed(2)} each`;
+            document.getElementById('modal-item-price').innerText = `$${finalPrice.toFixed(2)} each`;
             document.getElementById('modal-qty-display').innerText = selectedQty;
-            
             document.getElementById('qty-modal').style.display = 'flex';
         }
 
@@ -419,64 +497,44 @@
         }
 
         function addToCart() {
-            const itemTotal = selectedItem.price * selectedQty;
+            const finalPrice = selectedItem.price * priceMultiplier;
+            const itemTotal = finalPrice * selectedQty;
             cartTotal += itemTotal;
-            
-            // Push to cart array for tracking
             cartItems.push({ name: selectedItem.name, qty: selectedQty, total: itemTotal });
-            
-            // Update UI
             document.getElementById('cart-total').innerText = `$${cartTotal.toFixed(2)}`;
             document.getElementById('checkout-total').innerText = `$${cartTotal.toFixed(2)}`;
-            
             closeModal();
         }
 
-        // --- ORDER PROCESSING ---
-
         function confirmOrder() {
             if (cartTotal === 0) return alert("Your cart is empty!");
-            
             const notes = document.getElementById('dietary-notes').value;
-            
-            // Save to User's Order History
             if (currentUserEmail && usersDB[currentUserEmail]) {
                 if (!usersDB[currentUserEmail].orders) usersDB[currentUserEmail].orders = [];
-                
-                // Add order to the beginning of the array (newest first)
                 usersDB[currentUserEmail].orders.unshift({
-                    id: Math.floor(Math.random() * 1000000), // Random order number
+                    id: Math.floor(Math.random() * 1000000),
                     date: new Date().toLocaleDateString(),
                     total: cartTotal,
                     items: cartItems.length,
                     notes: notes || "None"
                 });
-                
-                // Save back to LocalStorage
                 localStorage.setItem('cb_users', JSON.stringify(usersDB));
             }
-
-            alert(`Order Confirmed for $${cartTotal.toFixed(2)}!\nIt has been saved to your Order History.`);
-            
-            // Reset state
-            cartTotal = 0;
-            cartItems = [];
+            alert(`Order Confirmed! Saved to History.`);
+            cartTotal = 0; cartItems = [];
             document.getElementById('cart-total').innerText = "$0.00";
             document.getElementById('checkout-total').innerText = "$0.00";
             document.getElementById('dietary-notes').value = "";
-            
             switchTab('view-home');
         }
 
         function renderOrders() {
             const container = document.getElementById('orders-container');
             const userOrders = usersDB[currentUserEmail]?.orders || [];
-            
             if (userOrders.length === 0) {
                 container.innerHTML = '<div class="item-card" style="justify-content: center;"><p style="color: var(--text-muted);">No past orders found.</p></div>';
                 return;
             }
-
             container.innerHTML = userOrders.map(order => `
                 <div class="item-card" style="flex-direction: column; align-items: flex-start;">
                     <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 8px;">

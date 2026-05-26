@@ -125,7 +125,7 @@
         </div>
 
         <header id="app-header">
-            <img src="CentralBox.png" alt="Home" class="internal-logo-btn" id="header-logo" onclick="switchTab('view-home')">
+            <img src="CB.png" alt="Home" class="internal-logo-btn" id="header-logo" onclick="switchTab('view-home')">
             <div id="role-badge">USER</div>
         </header>
 
@@ -171,6 +171,11 @@
                 <p style="color: var(--text-muted); margin-bottom: 20px;">Review your order and add any specific requirements.</p>
 
                 <div style="margin-top: 20px;">
+                    <label style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted);">PICKUP TIME</label>
+                    <select id="checkout-pickup-time" class="form-select" style="margin-top: 5px;"></select>
+                </div>
+
+                <div style="margin-top: 20px;">
                     <label style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted);">DIETARY / NUTRITIONAL REQUIREMENTS</label>
                     <textarea id="dietary-notes" class="form-input" placeholder="e.g. No nuts, gluten free..." style="height: 100px; resize: none; margin-top: 5px;"></textarea>
                 </div>
@@ -198,16 +203,9 @@
                     <p id="user-display-email" style="color: var(--text-muted);"></p>
                 </div>
 
-                <span class="section-label">Identity & Class</span>
-                <div class="item-card">
-                    <select class="form-select" style="margin-bottom:0;" id="profile-year-group">
-                        <option value="">Select Year Group</option>
-                        <option value="7">Year 7</option>
-                        <option value="8">Year 8</option>
-                        <option value="9">Year 9</option>
-                        <option value="10">Year 10</option>
-                        <option value="11">Year 11</option>
-                        <option value="12">Year 12</option>
+                <span class="section-label" id="identity-section-label">Identity & Class</span>
+                <div class="item-card" id="identity-section-card">
+                    <select class="form-select" style="margin-bottom:0;" id="profile-identity-select" onchange="saveProfileIdentity(this.value)">
                     </select>
                 </div>
 
@@ -225,7 +223,7 @@
                 </div>
 
                 <span class="section-label">Quick Actions</span>
-                <button class="btn-black" style="padding: 15px; margin-bottom: 10px; background: var(--accent); color: white;">View Favorite Orders</button>
+                <button class="btn-black" style="padding: 15px; margin-bottom: 10px; background: var(--accent); color: white;" onclick="showFavorites()">View Favorite Orders</button>
                 <button class="btn-black" style="background: #ff4757; color: white;" onclick="location.reload()">Log Out</button>
             </section>
 
@@ -250,9 +248,9 @@
                 <div class="item-card">
                     <div class="setting-row">
                         <span>Default Pickup</span>
-                        <select class="form-select" style="width: auto; padding: 5px 10px; margin-bottom: 0;">
-                            <option>Lunch</option>
-                            <option>Recess</option>
+                        <select id="settings-default-pickup" class="form-select" style="width: auto; padding: 5px 10px; margin-bottom: 0;" onchange="saveDefaultPickup(this.value)">
+                            <option value="Recess">Recess</option>
+                            <option value="Lunch">Lunch</option>
                         </select>
                     </div>
                 </div>
@@ -368,6 +366,10 @@
         function toggleTheme() {
             const isDark = document.getElementById('theme-toggle').checked;
             document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            if(currentUserEmail && usersDB[currentUserEmail]) {
+                usersDB[currentUserEmail].darkMode = isDark;
+                localStorage.setItem('cb_users', JSON.stringify(usersDB));
+            }
         }
 
         function toggleAuthMode() {
@@ -389,13 +391,13 @@
             const isStaff = email.endsWith('@centralbox.com');
 
             if (isSignupMode) {
-                usersDB[email] = { name: fullName, pass: pass, orders: [] };
+                usersDB[email] = { name: fullName, pass: pass, orders: [], identity: "", defaultPickup: "Recess", darkMode: false };
                 localStorage.setItem('cb_users', JSON.stringify(usersDB));
                 toggleAuthMode();
             } else {
                 if (isStudent || isTeacher || isStaff) {
                     if (!usersDB[email]) {
-                        usersDB[email] = { name: email.split('@')[0], pass: pass, orders: [] };
+                        usersDB[email] = { name: email.split('@')[0], pass: pass, orders: [], identity: "", defaultPickup: "Recess", darkMode: false };
                         localStorage.setItem('cb_users', JSON.stringify(usersDB));
                     }
                     const firstName = email.split('@')[0].split('.')[0];
@@ -414,6 +416,35 @@
             document.getElementById('user-display-email').innerText = email;
             
             priceMultiplier = (isTeacher || isStaff) ? 0.8 : 1.0;
+
+            const isDark = usersDB[email].darkMode || false;
+            document.getElementById('theme-toggle').checked = isDark;
+            document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+
+            const identityLabel = document.getElementById('identity-section-label');
+            const identityCard = document.getElementById('identity-section-card');
+            const identitySelect = document.getElementById('profile-identity-select');
+            
+            if (isStaff || (!isStudent && !isTeacher)) {
+                identityLabel.style.display = 'none';
+                identityCard.style.display = 'none';
+            } else if (isTeacher) {
+                identityLabel.innerText = 'Faculty';
+                identityLabel.style.display = 'block';
+                identityCard.style.display = 'flex';
+                identitySelect.innerHTML = '<option value="">Select Faculty</option><option value="Math">Math</option><option value="Science">Science</option><option value="English">English</option><option value="PDHPE">PDHPE</option><option value="Home Economics">Home Economics</option><option value="Industrial Arts">Industrial Arts</option><option value="Performing Arts">Performing Arts</option><option value="Literacy">Literacy</option>';
+                if (usersDB[email].identity) identitySelect.value = usersDB[email].identity;
+            } else {
+                identityLabel.innerText = 'Identity & Class';
+                identityLabel.style.display = 'block';
+                identityCard.style.display = 'flex';
+                identitySelect.innerHTML = '<option value="">Select Year Group</option><option value="7">Year 7</option><option value="8">Year 8</option><option value="9">Year 9</option><option value="10">Year 10</option><option value="11">Year 11</option><option value="12">Year 12</option>';
+                if (usersDB[email].identity) identitySelect.value = usersDB[email].identity;
+            }
+
+            if (usersDB[email].defaultPickup) {
+                document.getElementById('settings-default-pickup').value = usersDB[email].defaultPickup;
+            }
 
             const badge = document.getElementById('role-badge');
             const statsBtn = document.getElementById('stats-card-btn');
@@ -441,7 +472,6 @@
         }
 
         function switchTab(viewId) {
-            // Hide the header logo if on home screen, show otherwise
             document.getElementById('header-logo').style.opacity = (viewId === 'view-home') ? '0' : '1';
             document.getElementById('header-logo').style.pointerEvents = (viewId === 'view-home') ? 'none' : 'auto';
 
@@ -454,6 +484,7 @@
             document.getElementById('bottom-nav').style.display = (viewId === 'view-home') ? 'none' : 'flex';
             if(viewId === 'view-menu') renderMenu();
             if(viewId === 'view-orders') renderOrders();
+            if(viewId === 'view-checkout') prepareCheckout();
         }
 
         function renderMenu() {
@@ -506,9 +537,29 @@
             closeModal();
         }
 
+        function prepareCheckout() {
+            const date = new Date();
+            const isMonday = date.getDay() === 1;
+            const pickupSelect = document.getElementById('checkout-pickup-time');
+            
+            pickupSelect.innerHTML = isMonday 
+                ? `<option value="Recess 10:20">Recess (10:20 AM)</option><option value="Lunch 1:10">Lunch (1:10 PM)</option>`
+                : `<option value="Recess 10:15">Recess (10:15 AM)</option><option value="Lunch 1:25">Lunch (1:25 PM)</option>`;
+
+            const userDefault = usersDB[currentUserEmail]?.defaultPickup || "Recess";
+            for (let i = 0; i < pickupSelect.options.length; i++) {
+                if (pickupSelect.options[i].value.includes(userDefault)) {
+                    pickupSelect.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
         function confirmOrder() {
             if (cartTotal === 0) return alert("Your cart is empty!");
             const notes = document.getElementById('dietary-notes').value;
+            const pickupTime = document.getElementById('checkout-pickup-time').value;
+            
             if (currentUserEmail && usersDB[currentUserEmail]) {
                 if (!usersDB[currentUserEmail].orders) usersDB[currentUserEmail].orders = [];
                 usersDB[currentUserEmail].orders.unshift({
@@ -516,11 +567,13 @@
                     date: new Date().toLocaleDateString(),
                     total: cartTotal,
                     items: cartItems.length,
-                    notes: notes || "None"
+                    notes: notes || "None",
+                    pickup: pickupTime,
+                    cart: [...cartItems]
                 });
                 localStorage.setItem('cb_users', JSON.stringify(usersDB));
             }
-            alert(`Order Confirmed! Saved to History.`);
+            alert(`Order Confirmed for ${pickupTime}! Saved to History.`);
             cartTotal = 0; cartItems = [];
             document.getElementById('cart-total').innerText = "$0.00";
             document.getElementById('checkout-total').innerText = "$0.00";
@@ -541,12 +594,48 @@
                         <h4 style="margin: 0;">Order #${order.id}</h4>
                         <p style="color: var(--text-muted); font-size: 0.8rem; font-weight: bold;">${order.date}</p>
                     </div>
-                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                    <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 5px;">
                         <p style="font-size: 0.9rem; color: var(--text-muted);">${order.items} items</p>
                         <h4 style="color: var(--accent);">$${order.total.toFixed(2)}</h4>
                     </div>
+                    <p style="font-size: 0.75rem; color: var(--text-main); font-weight: 700;">Pickup: ${order.pickup || 'Unknown'}</p>
                 </div>
             `).join('');
+        }
+
+        function saveProfileIdentity(value) {
+            if(currentUserEmail && usersDB[currentUserEmail]) {
+                usersDB[currentUserEmail].identity = value;
+                localStorage.setItem('cb_users', JSON.stringify(usersDB));
+            }
+        }
+
+        function saveDefaultPickup(value) {
+            if(currentUserEmail && usersDB[currentUserEmail]) {
+                usersDB[currentUserEmail].defaultPickup = value;
+                localStorage.setItem('cb_users', JSON.stringify(usersDB));
+            }
+        }
+
+        function showFavorites() {
+            const orders = usersDB[currentUserEmail]?.orders || [];
+            if (orders.length === 0) return alert("You don't have any past orders to determine favorites yet.");
+
+            let itemCounts = {};
+            orders.forEach(order => {
+                if(order.cart) {
+                    order.cart.forEach(item => {
+                        itemCounts[item.name] = (itemCounts[item.name] || 0) + item.qty;
+                    });
+                }
+            });
+
+            if(Object.keys(itemCounts).length === 0) return alert("Favorite data is missing from older orders.");
+
+            const sortedItems = Object.keys(itemCounts).sort((a, b) => itemCounts[b] - itemCounts[a]);
+            const topFavorites = sortedItems.slice(0, 3).map(item => `- ${item} (${itemCounts[item]} ordered)`).join('\n');
+            
+            alert(`Your Top Favorite Items:\n\n${topFavorites}`);
         }
     </script>
 </body>

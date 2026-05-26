@@ -1,7 +1,7 @@
-## Central Box - School Canteen Ordering
+# Central Box - School Canteen Ordering
 Justin Huynh's Computing Technology Assessment
 
-How to:
+## How to:
 **The sign in logic works as follows:**
 - For a Student, the email prefix should be "@education.nsw.gov.au"
 - For a Teacher, the email prefix should be "@det.nsw.edu.au"
@@ -10,7 +10,7 @@ How to:
 - For a parent, every other email prefix will work. However, they will have to sign up.
 
 Additionally, depending on what version of the site the user is on, some features are added or removed.
-Key Functional Differences:
+## Key Functional Differences:
 🎓 **Student Version**
 - **Identity:** Focuses on the Year Group (7–12) for order distribution.
 - **Pricing:** Standard menu pricing ($1.00 multiplier).

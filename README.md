@@ -1,4 +1,4 @@
-# Central Box - School Canteen Ordering
+## Central Box - School Canteen Ordering
 Justin Huynh's Computing Technology Assessment
 
 How to:
